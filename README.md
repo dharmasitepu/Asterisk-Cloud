@@ -1,2 +1,239 @@
 # Asterisk-Cloud
 How to Implement Asterisk in Cloud Services For Telco Systems
+
+===============================================================================================
+= Asterisk berjalan pada Alibaba Cloud berikut adalah detail tentang Instance yang digunakan  =
+= ( OS Ubuntu 20.04 Server ) ( 1 vCPU 1 GiB ) ( Disk 40 GB ) ( Public IP = 47.254.244.29 )    =
+===============================================================================================
+
+
+// update Repository lalu restart Instance //
+# sudo apt update && sudo apt -y upgrade
+# sudo reboot
+
+
+// Install Depedency yang diperlukan Untuk Asterisk //
+# apt-get install make
+# apt-get install tar
+# apt-get install build-essential
+# apt-get install git-core subversion libjansson-dev sqlite autoconf automake libxml2-dev libncurses5-dev libtool
+
+
+// Masuk ke directory /usr/src lalu download Asterisk//
+# cd /usr/src
+# wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-16-current.tar.gz
+==============================================================================================
+= Untuk mengganti versi dari Asterisk ubah pada bagian "/asterisk-"Disini"-current.tar.gz"   =
+= atau bisa dilihat pada link berikut https://downloads.asterisk.org/pub/telephony/asterisk/ =
+==============================================================================================
+
+// Extract File yang telah di download //
+# tar -zxvf asterisk-15-current.tar.gz
+# cd /usr/src/asterisk-15.5.0
+# ./contrib/scripts/install_prereq install
+==============================================================================================
+= Jika sudah berhasil menginstall akan muncul  install completed successfully seperti berikut=
+=                   #############################################                            =
+=                         install completed successfully                                     =
+=                   #############################################                            =
+==============================================================================================
+# ./configure
+==============================================================================================
+= Jika sudah berhasil menginstall akan muncul  install completed successfully seperti berikut=
+=                .$$$$$$$$$$$$$$$=..                                                         =
+=             .$7$7..          .7$$7:.                                                       =
+=           .$$:.                 ,$7.7                                                      =
+=         .$7.     7$$$$           .$$77                                                     =
+=      ..$$.       $$$$$            .$$$7                                                    =
+=     ..7$   .?.   $$$$$   .?.       7$$$.                                                   =
+=    $.$.   .$$$7. $$$$7 .7$$$.      .$$$.                                                   =
+=  .777.   .$$$$$$77$$$77$$$$$7.      $$$,                                                   =
+=  $$$~      .7$$$$$$$$$$$$$7.       .$$$.                                                   =
+= .$$7          .7$$$$$$$7:          ?$$$.                                                   =
+= $$$          ?7$$$$$$$$$$I        .$$$7                                                    =
+= $$$       .7$$$$$$$$$$$$$$$$      :$$$.                                                    =
+= $$$       $$$$$$7$$$$$$$$$$$$    .$$$.                                                     =
+= $$$        $$$   7$$$7  .$$$    .$$$.                                                      =
+= $$$$             $$$$7         .$$$.                                                       =
+= 7$$$7            7$$$$        7$$$                                                         =
+=  $$$$$                        $$$                                                          =
+=   $$$$7.                       $$  (TM)                                                    =
+=    $$$$$$$.           .7$$$$$$  $$                                                         =
+=      $$$$$$$$$$$$7$$$$$$$$$.$$$$$$                                                         =
+=        $$$$$$$$$$$$$$$$.                                                                   =
+=                                                                                            =
+= configure: Package configured for:                                                         =
+= configure: OS type  : linux-gnu                                                            =
+= configure: Host CPU : x86_64                                                               =
+= configure: build-cpu:vendor:os: x86_64 : pc : linux-gnu :                                  =
+= configure: host-cpu:vendor:os: x86_64 : pc : linux-gnu :                                   =
+==============================================================================================
+# make
+==============================================================================================
+=             +--------- Asterisk Build Complete ---------+                                  =
+=             + Asterisk has successfully been built, and +                                  =
+=             + can be installed by running:              +                                  =
+=             +                                           +                                  =
+=             +                make install               +                                  =
+=             +-------------------------------------------+                                  =
+==============================================================================================
+# make install
+==============================================================================================
+=                          +---- Asterisk Installation Complete -------+                     =
+=                          +                                           +                     =
+=                          +    YOU MUST READ THE SECURITY DOCUMENT    +                     =
+=                          +                                           +                     =
+=                          + Asterisk has successfully been installed. +                     =
+=                          + If you would like to install the sample   +                     =
+=                          + configuration files (overwriting any      +                     =
+=                          + existing config files), run:              +                     =
+=                          +                                           +                     =
+=                          + For generic reference documentation:      +                     =
+=                          +    make samples                           +                     =
+=                          +                                           +                     =
+=                          + For a sample basic PBX:                   +                     =
+=                          +    make basic-pbx                         +                     =
+=                          +                                           +                     =
+=                          +                                           +                     =
+=                          +-----------------  or ---------------------+                     =
+=                          +                                           +                     =
+=                          + You can go ahead and install the asterisk +                     =
+=                          + program documentation now or later run:   +                     =
+=                          +                                           +                     =
+=                          +               make progdocs               +                     =
+=                          +                                           +                     =
+=                          + **Note** This requires that you have      +                     =
+=                          + doxygen installed on your local system    +                     =
+=                          +-------------------------------------------+                     =
+==============================================================================================
+
+
+// Asterisk sample configuration, service, log rotation script//
+# make samples
+# make config
+# make install-logrotate
+==============================================================================================
+= if [ ! -d "/etc/asterisk/../logrotate.d" ]; then \                                         =
+=        /usr/bin/install -c -d "/etc/asterisk/../logrotate.d" ; \                           =
+= fi                                                                                         =
+= sed 's#__LOGDIR__#/var/log/asterisk#g' < contrib/scripts/asterisk.logrotate |              =
+= sed 's#__SBINDIR__#/usr/sbin#g' > contrib/scripts/asterisk.logrotate.tmp                   =  
+= /usr/bin/install -c -m 0644 contrib/scripts/asterisk.logrotate.tmp "/etc/asterisk/         =
+= ../logrotate.d/asterisk"                                                                   = 
+= rm -f contrib/scripts/asterisk.logrotate.                                                  =
+==============================================================================================
+
+// Jalakan Asterisk//
+# systemctl start asterisk
+# systemctl status asterisk
+==============================================================================================
+= asterisk.service - LSB: Asterisk PBX                                                       =
+=    Loaded: loaded (/etc/init.d/asterisk; generated; vendor preset: enabled)                =
+=    Active: active (running) since Thu 2018-08-09 01:26:50 CDT; 29s ago                     =
+=      Docs: man:systemd-sysv-generator(8)                                                   =
+=   Process: 4996 ExecStart=/etc/init.d/asterisk start (code=exited, status=0/SUCCESS)       =
+=    CGroup: /system.slice/asterisk.service                                                  =
+=            └─5008 /usr/sbin/asterisk                                                       =
+==============================================================================================
+# systemctl enable asterisk
+# sudo ufw enable
+# sudo ufw allow proto tcp from any to any port 5060,5061
+# Sudo ufw status
+==============================================================================================
+= 5060/udp                   ALLOW       Anywhere                                            =  
+= 5061/udp                   ALLOW       Anywhere                                            =
+= NOTE : Jika anda menggunakan Cloud Provider lain Firewall bisa di atur di dashboard        = 
+=        lalu atur Allow Inbound dan Aoutbound untuk port 5060,5061 TCP/UDP                  =
+==============================================================================================
+
+// CONFIGURASU ASTERISK //
+==============================================================================================
+=  Selanjutnya Configurasi Dial Number dan beberapa settingan yang diperlukan, pada kali ini =
+=  Settingan Dial Number dan password serta sytle settingan bebas dan sesuai kebutuhan anda  =
+==============================================================================================
+// Backup File yang ingin dikonfigurasi Untuk menghindari terjadinya error //
+# cd /etc/asterisk
+# cp sip.conf sip.conf.backup
+# cp users.conf users.conf.backup
+# cp extensions.conf extensions.conf.backup
+
+
+
+
+// buka pjsip.conf lalu isikan konfigurasi berikut //
+# vim /etc/asterisk/pjsip.conf
+
+ [transport-udp]          
+ type=transport
+ protocol=udp
+ bind=0.0.0.0
+
+ [7000]
+ type=endpoint
+ context=from-internal
+ disallow=all
+ allow=ulaw
+ auth=7000
+ aors=7000
+
+ [7000]
+ type=auth
+ auth_type=userpass
+ password=password
+ username=7000
+
+ [7000]
+ type=aor
+ max_contacts=1
+ 
+ 
+ 
+ 
+ // buka sip.conf lalu isikan konfigurasi berikut //
+ # vim /etc/asterisk/sip.conf
+
+ [general]
+ context=default
+
+ [6001]
+ type=friend
+ context=from-internal
+ host=dynamic
+ secret=unsecurepassword
+ disallow=all 
+ allow=ulaw 
+ 
+ 
+ 
+ // buka extensions.conf lalu isikan konfigurasi berikut //
+ # vim /etc/asterisk/extensions.conf
+ 
+  [from-internal]
+ exten = 100,1,Answer()
+ same = n,Wait(1)
+ same = n,Playback(hello-world)
+ same = n,Hangup()
+
+
+!!Troubleshooting!!
+// Setelah Selesai mengkonfigurasi restart service asterisk  //
+// Jika terdapat error pada saat restart lakukan hal berikut //
+# sed -i 's";\[radius\]"\[radius\]"g' /etc/asterisk/cdr.conf
+# sed -i 's";radiuscfg => /usr/local/etc/radiusclient-ng/radiusclient.conf"radiuscfg => /etc/radcli/radiusclient.conf"g' /etc/asterisk/cdr.conf
+# sed -i 's";radiuscfg => /usr/local/etc/radiusclient-ng/radiusclient.conf"radiuscfg => /etc/radcli/radiusclient.conf"g' /etc/asterisk/cel.conf
+# systemctl restart asterisk
+# systemctl status asterisk
+# reboot
+# asterisk -rvvv
+
+/////////////////////////////////////////////////////////////////
+// Jika sudah berhasil masuk ke dalam Asterisk CLI selanjutnya // 
+// anda bisa melihat akun SIP yang sudah siap untuk digunakan  //
+////////////////////////////////////////////////////////////////
+SIP> sip show users
+// Masukkan User dan password pada Hp anda sertakan IP public //
+// DONE! //
+
+
+
+
