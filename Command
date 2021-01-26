@@ -9,7 +9,7 @@
 # sudo reboot
 
 
-// Install Depedency yang diperlukan Untuk Asterisk //
+// Install dependency & tool yang diperlukan Untuk Asterisk //
 # apt-get install make
 # apt-get install tar
 # apt-get install build-essential
