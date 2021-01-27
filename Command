@@ -25,8 +25,8 @@
 ==============================================================================================
 
 // Extract File yang telah di download //
-# tar -zxvf asterisk-15-current.tar.gz
-# cd /usr/src/asterisk-15.5.0
+# tar -zxvf asterisk-16-current.tar.gz
+# cd /usr/src/asterisk-16.16.0
 # ./contrib/scripts/install_prereq install
 ==============================================================================================
 = Jika sudah berhasil menginstall akan muncul  install completed successfully seperti berikut=
